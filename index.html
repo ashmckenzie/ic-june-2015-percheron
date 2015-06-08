@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Modelling applications with Percheron</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      li { padding-bottom: 20px; }
+      p { line-height: 32px; }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+
+    <textarea id="source">
+
+class: center, middle
+
+# Modelling applications with Percheron
+
+<div class="center">
+  <img src="./assets/percheron.png" width="40%" />
+</div>
+
+### InfraCoders June 9th 2015
+[@ashmckenzie](https://twitter.com/ashmckenzie)
+
+---
+
+background-image: url(assets/percheron-bg.png)
+layout: true
+
+---
+
+# Percheron: What?
+
+* Open source tool to organise your Docker images & containers
+* Similar to [Fig](http://www.fig.sh) / [Docker Compose](http://docs.docker.com/compose) but with a more application focus and more features
+* [github.com/ashmckenzie/percheron](https://github.com/ashmckenzie/percheron) started Feb 2015
+* Strong and intelligent horse :)
+
+---
+
+# Percheron: Why?
+
+Existing tools lacked:
+
+  * Concept of multiple collections of containers (stacks)
+  * Facility to build 'base' images
+  * Dependency management for building / starting
+
+Notable features:
+
+* Version control
+* Support for PRE build and POST start scripts
+* Ability to generate dependency graphs
+
+---
+
+# Percheron: Concepts
+
+## Stacks
+
+---
+
+# Percheron: Concepts
+
+## Units
+
+---
+
+class: center, middle
+
+# Demo
+
+## v0.7.10
+
+---
+
+# Upcoming features in v0.8.0
+
+---
+
+# Thanks!
+
+Give Percheron a go! [github.com/ashmckenzie/percheron](https://github.com/ashmckenzie/percheron)
+
+Credit to Dan Bradford ([@unroundme](https://twitter.com/unroundme)) for the awesome logo :)
+
+    </textarea>
+
+    <script src="./assets/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
