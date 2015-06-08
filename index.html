@@ -15,9 +15,16 @@
       }
       li { padding-bottom: 20px; }
       p { line-height: 32px; }
-      table { border: 1px solid #eee; }
-      thead th { padding: 6px; background-color: #eee; }
-      tbody td { padding: 4px; }
+      table { border-spacing: 0; border: 1px solid #eee; }
+      thead th { background-color: #ddd; }
+      thead th, tbody td { padding: 6px; border: 1px solid #eee; }
+      pre { background-color: #f0f0f0; }
+      pre code { display: block; padding: 0.5em; }
+
+      .concepts_units_attributes table { font-size: 95%; }
+      .full_config code { font-size: 68%; }
+      .percheron_list_output code { font-size: 82%; }
+
       .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
     </style>
   </head>
@@ -72,47 +79,44 @@ Notable features:
 
 The `.percheron.yml` has two main sections; `docker` and `stacks`:
 
-```yaml
+```ruby
 docker:
   host: "https://boot2docker:2376"
   ssl_verify_peer: false
 
 stacks:
-  - name: common
-    description: Common units for all stacks
+  - name: "common"
+    description: "Common units for all stacks"
     units: [...]
   - ...
-  - name: app
-    description: Application
+  - name: "app"
+    description: "The Application"
     units: [...]
 ```
-
 ---
-
-notes: test
 
 # Concepts: Stack
 
 Attributes:
 
-| Name          | Req'd   | Description              |
-| ------------- | :-----: | ------------------------ |
-| `name`        | Y       | Name of the stack        |
-| `description` | N       | Description of the stack |
+| Name          | Req'd | Description                |
+| ------------- | :---: | -------------------------- |
+| `name`        | Y     |                            |
+| `description` | N     | Human oriented description |
+| `units`       | Y     | One or more Units          |
 
-* Contains one more more Units
-* The `.percheron.yml` file must have at least one Stack defined
+The `.percheron.yml` file must have at least one Stack defined
 
-\* required and used when displaying status & generating dependency diagram
+Example:
 
-```yaml
+```ruby
 stacks:
-  - name: routing
-    description: Load balancing and proxying
+  - name: "routing"
+    description: "Load balancing and proxying"
     units:
-      - name: lb
+      - name: "load-balancer"
         ...
-      - name: app
+      - name: "app"
 ```
 
 ???
@@ -121,29 +125,145 @@ stacks:
 
 ---
 
+class: concepts_units_attributes
+
 # Concepts: Unit
 
-Supported attributes:
+Attributes:
 
-* `name*` (used when displaying status & generating dependency diagram)
-* `version*`
-* `dockerfile`
+| Name                   | Req'd | Description                                        |
+| ---------------------- | :---: | -------------------------------------------------- |
+| `name`                 | Y     |                                                    |
+| `version`              | Y     | Semantic version                                   |
+| `dockerfile`           | N     | Path to Dockerfile                                 |
+| `docker_image`         | N     | Docker image instead of `dockerfile`               |
+| `start_args`           | N     | Array of arguments to pass to the `docker_image`   |
+| `instances`            | N     | Number of instances to build / start               |
+| `ports`                | N     | Array of external:internal port mappings           |
+| `dependant_unit_names` | N     | Array of dependant Unit names to build / start     |
+| `startable`            | N     | Is this Unit startable (or is it just an image)?   |
+| `pre_build_scripts`    | N     | Array of scripts to execute PRE building the Unit  |
+| `post_start_scripts`   | N     | Array of scripts to execute POST starting the Unit |
 
-\* required
+---
 
-```yaml
-- name: lb
+# Concepts: Unit
+
+Example:
+
+```ruby
+- name: "load-balancer"
   version: 1.0.0
-  dockerfile: lb/Dockerfile
+  dockerfile: "load-balancer/Dockerfile"
   ports:
     - 8888:80
   dependant_unit_names:
-    - common:base
-    - proxy1
-    - proxy2
+    - "common:base"
+    - "proxy1"
+    - "proxy2"
 ```
 
+---
 
+# Full .percheron.yml config
+
+---
+
+class: full_config
+
+```ruby
+docker:
+  host: "https://boot2docker:2376"
+  ssl_verify_peer: false
+
+stacks:
+  - name: "common"
+    description: "Common units for all stacks"
+    units:
+      - name: "base"
+        version: 1.0.0
+        dockerfile: "common/Dockerfile"
+        startable: false
+
+  - name: "routing"
+    description: "Load balancing and proxying"
+    units:
+      - name: "load-balancer"
+        version: 1.0.0
+        dockerfile: "load-balancer/Dockerfile"
+        ports:
+          - 8888:80
+        dependant_unit_names:
+          - "common:base"
+          - "proxy1"
+          - "proxy2"
+
+      - name: "proxy"
+        instances: 2
+        version: 1.0.0
+        dockerfile: "proxy/Dockerfile"
+        dependant_unit_names:
+          - "common:base"
+          - "app:app1"
+          - "app:app2"
+
+  - name: "app"
+    description: "The Application"
+    units:
+      - name: "app"
+        instances: 2
+        version: 1.0.0
+        dockerfile: "app/Dockerfile"
+        dependant_unit_names:
+          - "common:base"
+```
+
+---
+
+class: percheron_list_output
+
+# percheron list output
+
+```shell
+$ bundle exec percheron list
+
++------+----+----------+-----+-------+---------+---------+
+|                         common                         |
++------+----+----------+-----+-------+---------+---------+
+| Unit | ID | Running? | IP  | Ports | Volumes | Version |
++------+----+----------+-----+-------+---------+---------+
+| base |    | n/a      | n/a |       |         |         |
++------+----+----------+-----+-------+---------+---------+
+
++---------------+----+----------+-----+---------+---------+---------+
+|                              routing                              |
++---------------+----+----------+-----+---------+---------+---------+
+| Unit          | ID | Running? | IP  | Ports   | Volumes | Version |
++---------------+----+----------+-----+---------+---------+---------+
+| load-balancer |    | -        | n/a | 8888:80 |         |         |
+| proxy1        |    | -        | n/a |         |         |         |
+| proxy2        |    | -        | n/a |         |         |         |
++---------------+----+----------+-----+---------+---------+---------+
+
++------+----+----------+-----+-------+---------+---------+
+|                          app                           |
++------+----+----------+-----+-------+---------+---------+
+| Unit | ID | Running? | IP  | Ports | Volumes | Version |
++------+----+----------+-----+-------+---------+---------+
+| app1 |    | -        | n/a |       |         |         |
+| app2 |    | -        | n/a |       |         |         |
++------+----+----------+-----+-------+---------+---------+
+```
+
+---
+
+# Diagram
+
+---
+
+<div class="center">
+  <img src="./assets/percheron_common.png" width="40%" />
+</div>
 
 ---
 
@@ -151,11 +271,7 @@ class: center, middle
 
 # Demo
 
-## v0.7.10
-
----
-
-# Upcoming features in v0.8.0
+## v0.8.x-dev
 
 ---
 

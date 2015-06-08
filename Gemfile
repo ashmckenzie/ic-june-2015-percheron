@@ -1,3 +1,4 @@
 source 'https://rubygems.org'
 
-gem 'percheron', '~> 0.7'
+gem 'pry-byebug'
+gem 'percheron', github: 'ashmckenzie/percheron', branch: 'experimental'
