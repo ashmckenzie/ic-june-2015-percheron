@@ -85,11 +85,11 @@ docker:
   ssl_verify_peer: false
 
 stacks:
-  - name: "common"
+  - name: "demo-common"
     description: "Common units for all stacks"
     units: [...]
   - ...
-  - name: "app"
+  - name: "demo-app"
     description: "The Application"
     units: [...]
 ```
@@ -111,12 +111,12 @@ Example:
 
 ```ruby
 stacks:
-  - name: "routing"
+  - name: "demo-routing"
     description: "Load balancing and proxying"
     units:
       - name: "load-balancer"
         ...
-      - name: "app"
+      - name: "demo-app"
 ```
 
 ???
@@ -177,7 +177,7 @@ docker:
   ssl_verify_peer: false
 
 stacks:
-  - name: "common"
+  - name: "demo-common"
     description: "Common units for all stacks"
     units:
       - name: "base"
@@ -185,7 +185,7 @@ stacks:
         dockerfile: "common/Dockerfile"
         startable: false
 
-  - name: "routing"
+  - name: "demo-routing"
     description: "Load balancing and proxying"
     units:
       - name: "load-balancer"
@@ -194,7 +194,7 @@ stacks:
         ports:
           - 8888:80
         dependant_unit_names:
-          - "common:base"
+          - "demo-common:base"
           - "proxy1"
           - "proxy2"
 
@@ -203,11 +203,11 @@ stacks:
         version: 1.0.0
         dockerfile: "proxy/Dockerfile"
         dependant_unit_names:
-          - "common:base"
-          - "app:app1"
-          - "app:app2"
+          - "demo-common:base"
+          - "demo-app:app1"
+          - "demo-app:app2"
 
-  - name: "app"
+  - name: "demo-app"
     description: "The Application"
     units:
       - name: "app"
@@ -215,7 +215,8 @@ stacks:
         version: 1.0.0
         dockerfile: "app/Dockerfile"
         dependant_unit_names:
-          - "common:base"
+          - "demo-common:base"
+
 ```
 
 ---
@@ -229,7 +230,7 @@ class: percheron_list_output
 $ bundle exec percheron list
 
 +------+----+----------+-----+-------+---------+---------+
-|                         common                         |
+|                      demo-common                       |
 +------+----+----------+-----+-------+---------+---------+
 | Unit | ID | Running? | IP  | Ports | Volumes | Version |
 +------+----+----------+-----+-------+---------+---------+
@@ -237,7 +238,7 @@ $ bundle exec percheron list
 +------+----+----------+-----+-------+---------+---------+
 
 +---------------+----+----------+-----+---------+---------+---------+
-|                              routing                              |
+|                           demo-routing                            |
 +---------------+----+----------+-----+---------+---------+---------+
 | Unit          | ID | Running? | IP  | Ports   | Volumes | Version |
 +---------------+----+----------+-----+---------+---------+---------+
@@ -247,7 +248,7 @@ $ bundle exec percheron list
 +---------------+----+----------+-----+---------+---------+---------+
 
 +------+----+----------+-----+-------+---------+---------+
-|                          app                           |
+|                        demo-app                        |
 +------+----+----------+-----+-------+---------+---------+
 | Unit | ID | Running? | IP  | Ports | Volumes | Version |
 +------+----+----------+-----+-------+---------+---------+
