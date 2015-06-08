@@ -15,6 +15,9 @@
       }
       li { padding-bottom: 20px; }
       p { line-height: 32px; }
+      table { border: 1px solid #eee; }
+      thead th { padding: 6px; background-color: #eee; }
+      tbody td { padding: 4px; }
       .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
     </style>
   </head>
@@ -40,20 +43,20 @@ layout: true
 
 ---
 
-# Percheron: What?
+# Percheron
 
-* Open source tool to organise your Docker images & containers
+* Open source command line tool to organise your Docker images & containers
 * Similar to [Fig](http://www.fig.sh) / [Docker Compose](http://docs.docker.com/compose) but with a more application focus and more features
 * [github.com/ashmckenzie/percheron](https://github.com/ashmckenzie/percheron) started Feb 2015
 * Strong and intelligent horse :)
 
 ---
 
-# Percheron: Why?
+# Why?
 
 Existing tools lacked:
 
-  * Concept of multiple collections of containers (stacks)
+  * Concept of multiple collections of containers (Stacks)
   * Facility to build 'base' images
   * Dependency management for building / starting
 
@@ -61,19 +64,86 @@ Notable features:
 
 * Version control
 * Support for PRE build and POST start scripts
-* Ability to generate dependency graphs
+* Ability to generate dependency diagrams
 
 ---
 
-# Percheron: Concepts
+# Config
 
-## Stacks
+The `.percheron.yml` has two main sections; `docker` and `stacks`:
+
+```yaml
+docker:
+  host: "https://boot2docker:2376"
+  ssl_verify_peer: false
+
+stacks:
+  - name: common
+    description: Common units for all stacks
+    units: [...]
+  - ...
+  - name: app
+    description: Application
+    units: [...]
+```
 
 ---
 
-# Percheron: Concepts
+notes: test
 
-## Units
+# Concepts: Stack
+
+Attributes:
+
+| Name          | Req'd   | Description              |
+| ------------- | :-----: | ------------------------ |
+| `name`        | Y       | Name of the stack        |
+| `description` | N       | Description of the stack |
+
+* Contains one more more Units
+* The `.percheron.yml` file must have at least one Stack defined
+
+\* required and used when displaying status & generating dependency diagram
+
+```yaml
+stacks:
+  - name: routing
+    description: Load balancing and proxying
+    units:
+      - name: lb
+        ...
+      - name: app
+```
+
+???
+
+* I like to group Units together in a Stack which allows independent building and starting/stopping of other Stacks.
+
+---
+
+# Concepts: Unit
+
+Supported attributes:
+
+* `name*` (used when displaying status & generating dependency diagram)
+* `version*`
+* `dockerfile`
+
+\* required
+
+```yaml
+- name: lb
+  version: 1.0.0
+  dockerfile: lb/Dockerfile
+  ports:
+    - 8888:80
+  dependant_unit_names:
+    - common:base
+    - proxy1
+    - proxy2
+```
+
+
 
 ---
 
