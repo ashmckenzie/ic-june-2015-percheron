@@ -1,7 +1,5 @@
-GIT
-  remote: git://github.com/ashmckenzie/percheron.git
-  revision: 06dce6bfe14aaa2bea372c4f40559a553f4f07b7
-  branch: experimental
+PATH
+  remote: /Users/ash/src/personal/hilander/tmp/percheron
   specs:
     percheron (0.8.0.pre.dev)
       clamp (~> 0.6)

@@ -30,9 +30,9 @@ stacks:
         version: 1.0.0
         dockerfile: "proxy/Dockerfile"
         dependant_unit_names:
-          - common:base
-          - app:app1
-          - app:app2
+          - "common:base"
+          - "app:app1"
+          - "app:app2"
 
   - name: "app"
     description: "The Application"
