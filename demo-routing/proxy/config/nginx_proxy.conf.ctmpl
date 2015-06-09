@@ -1,7 +1,7 @@
 upstream app_servers {
   hash $request_uri consistent;
   {{range service "app.demo-app"}}
-  server {{.Address}}:{{.Port}}; # {.Node}{{end}}
+  server {{.Address}}:{{.Port}}; # {{.Node}}{{end}}
 }
 
 server {
