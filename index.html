@@ -23,7 +23,6 @@
 
       .concepts_units_attributes table { font-size: 95%; }
       .full_config code { font-size: 55%; }
-      .percheron_list_output code { font-size: 82%; }
 
       .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
     </style>
@@ -41,7 +40,8 @@ class: center, middle
 </div>
 
 ### InfraCoders June 9th 2015
-[@ashmckenzie](https://twitter.com/ashmckenzie)
+
+Ash McKenzie [@ashmckenzie](https://twitter.com/ashmckenzie)
 
 ---
 
@@ -69,9 +69,9 @@ Existing tools lacked:
 
 Notable features:
 
-* Version control
 * Support for PRE build and POST start scripts
 * Ability to generate dependency diagrams
+* Version control
 
 ---
 
@@ -85,7 +85,7 @@ class: center, middle
 
 ---
 
-# Config
+# Percheron config
 
 The `.percheron.yml` has two main sections; `docker` and `stacks`:
 
@@ -118,9 +118,7 @@ Abstraction exists to support 'base' images and 'non startable' containers.
 
 class: concepts_units_attributes
 
-# Concepts: Unit
-
-Attributes:
+# Unit attributes
 
 | Name                   | Req'd | Description                                        |
 | ---------------------- | :---: | -------------------------------------------------- |
@@ -138,9 +136,7 @@ Attributes:
 
 ---
 
-# Concepts: Unit
-
-Example:
+# Unit example
 
 ```ruby
 - name: "load-balancer"
@@ -166,9 +162,7 @@ The `.percheron.yml` file must have at least one Stack defined.
 
 ---
 
-# Concepts: Stack
-
-Attributes:
+# Stack attributes
 
 | Name          | Req'd | Description                |
 | ------------- | :---: | -------------------------- |
@@ -176,7 +170,9 @@ Attributes:
 | `description` | N     | Human oriented description |
 | `units`       | Y     | One or more Units          |
 
-Example:
+---
+
+# Stack example
 
 ```ruby
 stacks:
@@ -256,50 +252,7 @@ stacks:
 
 ---
 
-background-image: default
-class: percheron_list_output
-
-# percheron list output
-
-```shell
-$ bundle exec percheron list
-
-+------+----+----------+-----+-------+---------+---------+
-|                      demo-common                       |
-+------+----+----------+-----+-------+---------+---------+
-| Unit | ID | Running? | IP  | Ports | Volumes | Version |
-+------+----+----------+-----+-------+---------+---------+
-| base |    | n/a      | n/a |       |         |         |
-+------+----+----------+-----+-------+---------+---------+
-
-+------+----+----------+-----+-------+---------+---------+
-|                        demo-app                        |
-+------+----+----------+-----+-------+---------+---------+
-| Unit | ID | Running? | IP  | Ports | Volumes | Version |
-+------+----+----------+-----+-------+---------+---------+
-| app1 |    | -        | n/a |       |         |         |
-| app2 |    | -        | n/a |       |         |         |
-+------+----+----------+-----+-------+---------+---------+
-
-+---------------+----+----------+-----+---------+---------+---------+
-|                           demo-routing                            |
-+---------------+----+----------+-----+---------+---------+---------+
-| Unit          | ID | Running? | IP  | Ports   | Volumes | Version |
-+---------------+----+----------+-----+---------+---------+---------+
-| load-balancer |    | -        | n/a | 8888:80 |         |         |
-| proxy1        |    | -        | n/a |         |         |         |
-| proxy2        |    | -        | n/a |         |         |         |
-+---------------+----+----------+-----+---------+---------+---------+
-```
-
----
-
 # Diagram
-
-```shell
-$ bundle exec percheron graph
-I, [2015-06-09T01:54:50.052200 #56063]  INFO -- : Saved 'percheron_stack.png'
-```
 
 ---
 
