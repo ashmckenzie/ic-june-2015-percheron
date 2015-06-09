@@ -142,16 +142,34 @@ class: concepts_units_attributes
 - name: "load-balancer"
   version: 1.0.0
   dockerfile: "load-balancer/Dockerfile"
+
   ports:
     - 8888:80
+
   pre_build_scripts:
     - ./scripts/tar_up.sh
+
   post_start_scripts:
     - ./scripts/notify.sh
+
   dependant_unit_names:
     - "common:base"
     - "proxy1"
     - "proxy2"
+```
+
+---
+
+# Unit example
+
+```ruby
+- name: "consul"
+  version: 1.0.0
+  docker_image: "progrium/consul:latest"
+  start_args: "-server -bootstrap -ui-dir /ui"
+
+  ports:
+    - "8500:8500"
 ```
 
 ---
