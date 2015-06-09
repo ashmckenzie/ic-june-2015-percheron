@@ -197,6 +197,7 @@ stacks:
 class: full_config
 
 ```ruby
+---
 docker:
   host: "https://boot2docker:2376"
   ssl_verify_peer: false
@@ -207,30 +208,15 @@ stacks:
     units:
       - name: "base"
         version: 1.0.0
-        dockerfile: "common/Dockerfile"
+        dockerfile: "demo-common/base/Dockerfile"
         startable: false
 
-  - name: "demo-routing"
-    description: "Load balancing and proxying"
-    units:
-      - name: "load-balancer"
+      - name: "consul"
         version: 1.0.0
-        dockerfile: "load-balancer/Dockerfile"
+        docker_image: "progrium/consul:latest"
+        start_args: "-server -bootstrap -ui-dir /ui"
         ports:
-          - 8888:80
-        dependant_unit_names:
-          - "demo-common:base"
-          - "proxy1"
-          - "proxy2"
-
-      - name: "proxy"
-        instances: 2
-        version: 1.0.0
-        dockerfile: "proxy/Dockerfile"
-        dependant_unit_names:
-          - "demo-common:base"
-          - "demo-app:app1"
-          - "demo-app:app2"
+          - "8500:8500"
 
   - name: "demo-app"
     description: "The Application"
@@ -238,10 +224,34 @@ stacks:
       - name: "app"
         instances: 2
         version: 1.0.0
-        dockerfile: "app/Dockerfile"
+        dockerfile: "demo-app/app/Dockerfile"
         dependant_unit_names:
           - "demo-common:base"
+          - "demo-common:consul"
 
+  - name: "demo-routing"
+    description: "Load balancing and proxying"
+    units:
+      - name: "load-balancer"
+        version: 1.0.0
+        dockerfile: "demo-routing/load-balancer/Dockerfile"
+        ports:
+          - 8888:80
+        dependant_unit_names:
+          - "demo-common:base"
+          - "demo-common:consul"
+          - "proxy1"
+          - "proxy2"
+
+      - name: "proxy"
+        instances: 2
+        version: 1.0.0
+        dockerfile: "demo-routing/proxy/Dockerfile"
+        dependant_unit_names:
+          - "demo-common:base"
+          - "demo-common:consul"
+          - "demo-app:app1"
+          - "demo-app:app2"
 ```
 
 ---
@@ -262,6 +272,15 @@ $ bundle exec percheron list
 | base |    | n/a      | n/a |       |         |         |
 +------+----+----------+-----+-------+---------+---------+
 
++------+----+----------+-----+-------+---------+---------+
+|                        demo-app                        |
++------+----+----------+-----+-------+---------+---------+
+| Unit | ID | Running? | IP  | Ports | Volumes | Version |
++------+----+----------+-----+-------+---------+---------+
+| app1 |    | -        | n/a |       |         |         |
+| app2 |    | -        | n/a |       |         |         |
++------+----+----------+-----+-------+---------+---------+
+
 +---------------+----+----------+-----+---------+---------+---------+
 |                           demo-routing                            |
 +---------------+----+----------+-----+---------+---------+---------+
@@ -271,15 +290,6 @@ $ bundle exec percheron list
 | proxy1        |    | -        | n/a |         |         |         |
 | proxy2        |    | -        | n/a |         |         |         |
 +---------------+----+----------+-----+---------+---------+---------+
-
-+------+----+----------+-----+-------+---------+---------+
-|                        demo-app                        |
-+------+----+----------+-----+-------+---------+---------+
-| Unit | ID | Running? | IP  | Ports | Volumes | Version |
-+------+----+----------+-----+-------+---------+---------+
-| app1 |    | -        | n/a |       |         |         |
-| app2 |    | -        | n/a |       |         |         |
-+------+----+----------+-----+-------+---------+---------+
 ```
 
 ---

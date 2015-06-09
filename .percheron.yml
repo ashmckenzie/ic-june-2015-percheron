@@ -19,6 +19,17 @@ stacks:
         ports:
           - "8500:8500"
 
+  - name: "demo-app"
+    description: "The Application"
+    units:
+      - name: "app"
+        instances: 2
+        version: 1.0.0
+        dockerfile: "demo-app/app/Dockerfile"
+        dependant_unit_names:
+          - "demo-common:base"
+          - "demo-common:consul"
+
   - name: "demo-routing"
     description: "Load balancing and proxying"
     units:
@@ -42,14 +53,3 @@ stacks:
           - "demo-common:consul"
           - "demo-app:app1"
           - "demo-app:app2"
-
-  - name: "demo-app"
-    description: "The Application"
-    units:
-      - name: "app"
-        instances: 2
-        version: 1.0.0
-        dockerfile: "demo-app/app/Dockerfile"
-        dependant_unit_names:
-          - "demo-common:base"
-          - "demo-common:consul"

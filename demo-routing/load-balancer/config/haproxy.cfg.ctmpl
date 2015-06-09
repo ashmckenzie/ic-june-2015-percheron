@@ -17,6 +17,12 @@ frontend  main *:80
   default_backend proxy
 
 backend proxy
+  mode http
   balance roundrobin
-  server  proxy1 proxy1:80 check
-  server  proxy2 proxy2:80 check
+  option forwardfor
+  retries 3
+  http-request set-header X-Forwarded-Port %[dst_port]
+  http-request add-header X-Forwarded-Proto https if { ssl_fc }
+  option httpchk HEAD /
+  {{range service "proxy.demo-routing"}}
+  server {{.Node}} {{.Address}}:{{.Port}}  check{{end}}
