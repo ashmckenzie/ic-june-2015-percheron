@@ -144,6 +144,10 @@ class: concepts_units_attributes
   dockerfile: "load-balancer/Dockerfile"
   ports:
     - 8888:80
+  pre_build_scripts:
+    - ./scripts/tar_up.sh
+  post_start_scripts:
+    - ./scripts/notify.sh
   dependant_unit_names:
     - "common:base"
     - "proxy1"
@@ -180,8 +184,13 @@ stacks:
     description: "Load balancing and proxying"
     units:
       - name: "demo-common"
+        description: "Common units for all stacks"
+
       - name: "demo-app"
+        description: "The Application"
+
       - name: "demo-routing"
+        description: "Load balancing and proxying"
 ```
 
 ---
