@@ -9,28 +9,37 @@ stacks:
     units:
       - name: "base"
         version: 1.0.0
-        dockerfile: "common/Dockerfile"
+        dockerfile: "demo-common/base/Dockerfile"
         startable: false
+
+      - name: "consul"
+        version: 1.0.0
+        docker_image: "progrium/consul:latest"
+        start_args: "-server -bootstrap -ui-dir /ui"
+        ports:
+          - "8500:8500"
 
   - name: "demo-routing"
     description: "Load balancing and proxying"
     units:
       - name: "load-balancer"
         version: 1.0.0
-        dockerfile: "load-balancer/Dockerfile"
+        dockerfile: "demo-routing/load-balancer/Dockerfile"
         ports:
           - 8888:80
         dependant_unit_names:
           - "demo-common:base"
+          - "demo-common:consul"
           - "proxy1"
           - "proxy2"
 
       - name: "proxy"
         instances: 2
         version: 1.0.0
-        dockerfile: "proxy/Dockerfile"
+        dockerfile: "demo-routing/proxy/Dockerfile"
         dependant_unit_names:
           - "demo-common:base"
+          - "demo-common:consul"
           - "demo-app:app1"
           - "demo-app:app2"
 
@@ -40,6 +49,7 @@ stacks:
       - name: "app"
         instances: 2
         version: 1.0.0
-        dockerfile: "app/Dockerfile"
+        dockerfile: "demo-app/app/Dockerfile"
         dependant_unit_names:
           - "demo-common:base"
+          - "demo-common:consul"

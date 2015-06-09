@@ -75,6 +75,16 @@ Notable features:
 
 ---
 
+# The Application
+
+---
+
+class: center, middle
+
+<img src="./assets/app_diagram.png" width="70%" />
+
+---
+
 # Config
 
 The `.percheron.yml` has two main sections; `docker` and `stacks`:
@@ -93,35 +103,16 @@ stacks:
     description: "The Application"
     units: [...]
 ```
+
 ---
 
-# Concepts: Stack
+class: concepts_units_attributes
 
-Attributes:
+# Concepts: Unit
 
-| Name          | Req'd | Description                |
-| ------------- | :---: | -------------------------- |
-| `name`        | Y     |                            |
-| `description` | N     | Human oriented description |
-| `units`       | Y     | One or more Units          |
+A Unit is either a Docker Image or Container.
 
-The `.percheron.yml` file must have at least one Stack defined
-
-Example:
-
-```ruby
-stacks:
-  - name: "demo-routing"
-    description: "Load balancing and proxying"
-    units:
-      - name: "load-balancer"
-        ...
-      - name: "demo-app"
-```
-
-???
-
-* I like to group Units together in a Stack which allows independent building and starting/stopping of other Stacks.
+Abstraction exists to support 'base' images and 'non startable' containers.
 
 ---
 
@@ -161,6 +152,40 @@ Example:
     - "common:base"
     - "proxy1"
     - "proxy2"
+```
+
+---
+
+# Concepts: Stack
+
+A Stack is a collection of Units.
+
+Group Units together in a Stack to allow independent building and starting / stopping of other Stacks.
+
+The `.percheron.yml` file must have at least one Stack defined.
+
+---
+
+# Concepts: Stack
+
+Attributes:
+
+| Name          | Req'd | Description                |
+| ------------- | :---: | -------------------------- |
+| `name`        | Y     |                            |
+| `description` | N     | Human oriented description |
+| `units`       | Y     | One or more Units          |
+
+Example:
+
+```ruby
+stacks:
+  - name: "demo-routing"
+    description: "Load balancing and proxying"
+    units:
+      - name: "load-balancer"
+        ...
+      - name: "demo-app"
 ```
 
 ---
@@ -285,6 +310,8 @@ class: center, middle
 ---
 
 # Thanks!
+
+We're hiring DevOps Engineers, come and talk to me!
 
 Give Percheron a go! [github.com/ashmckenzie/percheron](https://github.com/ashmckenzie/percheron)
 
